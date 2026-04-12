@@ -2,46 +2,78 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 
-// ─── Text-to-Speech ────────────────────────────────────────────────────────────
+// ─── Text-to-Speech (OpenAI Nova) ─────────────────────────────────────────────
 
 export function useTTS() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [isSupported, setIsSupported] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const objectUrlRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    setIsSupported(typeof window !== "undefined" && "speechSynthesis" in window);
+  // Always supported — uses our server-side API route
+  const isSupported = true;
+
+  const stop = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    if (objectUrlRef.current) {
+      URL.revokeObjectURL(objectUrlRef.current);
+      objectUrlRef.current = null;
+    }
+    setIsSpeaking(false);
   }, []);
 
   const speak = useCallback(
-    (text: string) => {
-      if (!isSupported || isMuted) return;
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
-      utterance.onstart = () => setIsSpeaking(true);
-      utterance.onend = () => setIsSpeaking(false);
-      utterance.onerror = () => setIsSpeaking(false);
-      window.speechSynthesis.speak(utterance);
-    },
-    [isSupported, isMuted]
-  );
+    async (text: string) => {
+      if (isMuted || !text.trim()) return;
 
-  const stop = useCallback(() => {
-    if (isSupported) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
-    }
-  }, [isSupported]);
+      // Stop any in-progress speech
+      stop();
+
+      setIsSpeaking(true);
+      try {
+        const res = await fetch("/api/tts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        });
+
+        if (!res.ok) throw new Error("TTS request failed");
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        objectUrlRef.current = url;
+
+        const audio = new Audio(url);
+        audioRef.current = audio;
+
+        audio.onended = () => {
+          URL.revokeObjectURL(url);
+          objectUrlRef.current = null;
+          audioRef.current = null;
+          setIsSpeaking(false);
+        };
+
+        audio.onerror = () => {
+          setIsSpeaking(false);
+        };
+
+        await audio.play();
+      } catch {
+        setIsSpeaking(false);
+      }
+    },
+    [isMuted, stop]
+  );
 
   const toggleMute = useCallback(() => {
     setIsMuted((m) => {
-      if (!m) window.speechSynthesis?.cancel();
+      if (!m) stop();
       return !m;
     });
-    setIsSpeaking(false);
-  }, []);
+  }, [stop]);
 
   return { isSpeaking, isMuted, isSupported, speak, stop, toggleMute };
 }

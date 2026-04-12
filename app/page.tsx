@@ -456,17 +456,18 @@ export default function Home() {
                   and what isn&apos;t, then iteratively refine it — before you spend a dollar on real ads.
                 </p>
 
-                <div className="flex flex-col items-center gap-4">
+                <div className="flex flex-col items-center gap-6 w-full max-w-sm">
                   <button
                     onClick={startBriefAgent}
-                    className="px-8 py-3 bg-amber-500 hover:bg-amber-400 text-neutral-900 font-semibold rounded-xl transition-colors text-sm"
+                    className="w-full px-8 py-3 bg-amber-500 hover:bg-amber-400 text-neutral-900 font-semibold rounded-xl transition-colors text-sm"
                   >
                     Start New Campaign Brief →
                   </button>
 
-                  {savedBriefNames.length > 0 && (
-                    <div className="w-full max-w-sm">
-                      <p className="text-xs text-neutral-500 mb-2 text-center">— or load a saved brief —</p>
+                  {/* Load existing — always visible */}
+                  <div className="w-full">
+                    <p className="text-xs text-neutral-500 mb-2 text-center">— or open an existing Campaign Brief —</p>
+                    {savedBriefNames.length > 0 ? (
                       <div className="space-y-2">
                         {savedBriefNames.map((name) => (
                           <button
@@ -481,8 +482,15 @@ export default function Home() {
                           </button>
                         ))}
                       </div>
-                    </div>
-                  )}
+                    ) : (
+                      <p className="text-xs text-neutral-600 text-center">
+                        No saved briefs yet. After creating one, use the <span className="text-neutral-500">Save Brief</span> option to store it.
+                      </p>
+                    )}
+                    <p className="text-xs text-neutral-700 mt-2 text-center font-mono">
+                      saved-briefs/ → VirtualAudience-app/saved-briefs/
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
@@ -535,21 +543,36 @@ export default function Home() {
 
                 <BriefSummaryCard brief={brief} />
 
-                {/* Save brief */}
-                <div className="flex gap-2 items-center">
-                  <input
-                    value={briefSaveName}
-                    onChange={(e) => { setBriefSaveName(e.target.value); setBriefSaved(false); }}
-                    placeholder="Name to save as..."
-                    className="flex-1 bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-neutral-200 placeholder-neutral-600 focus:outline-none focus:border-amber-500/50"
-                  />
-                  <button
-                    onClick={saveBrief}
-                    disabled={!briefSaveName.trim() || briefSaving}
-                    className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 disabled:opacity-40 text-neutral-300 text-sm rounded-lg transition-colors whitespace-nowrap"
-                  >
-                    {briefSaving ? "Saving..." : briefSaved ? "Saved ✓" : "Save Brief"}
-                  </button>
+                {/* Save brief — prominent */}
+                <div className="p-4 bg-neutral-800 border border-neutral-700 rounded-xl">
+                  <p className="text-xs text-neutral-400 font-medium mb-3">
+                    Save this brief for later use
+                    <span className="text-neutral-600 font-normal ml-1">(recommended — reuse it without going through setup again)</span>
+                  </p>
+                  <div className="flex gap-2 items-center">
+                    <input
+                      value={briefSaveName}
+                      onChange={(e) => { setBriefSaveName(e.target.value); setBriefSaved(false); }}
+                      placeholder="Give this brief a name..."
+                      className="flex-1 bg-neutral-900 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-neutral-200 placeholder-neutral-600 focus:outline-none focus:border-amber-500/50"
+                    />
+                    <button
+                      onClick={saveBrief}
+                      disabled={!briefSaveName.trim() || briefSaving}
+                      className={`px-4 py-2 text-sm rounded-lg transition-colors whitespace-nowrap ${
+                        briefSaved
+                          ? "bg-green-500/20 border border-green-500/30 text-green-400"
+                          : "bg-amber-500/20 border border-amber-500/30 hover:bg-amber-500/30 text-amber-400 disabled:opacity-40"
+                      }`}
+                    >
+                      {briefSaving ? "Saving..." : briefSaved ? "Saved ✓" : "Save Brief"}
+                    </button>
+                  </div>
+                  {briefSaved && (
+                    <p className="text-xs text-neutral-600 mt-2 font-mono">
+                      Saved to: VirtualAudience-app/saved-briefs/{briefSaveName}.json
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex gap-3">

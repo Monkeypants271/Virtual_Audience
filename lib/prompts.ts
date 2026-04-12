@@ -162,8 +162,10 @@ ${assetText}
 From THIS persona's perspective — their skepticism, motivations, objections, and emotional state —
 score how likely you are to take the requested action after seeing this asset.
 
-Also consider whether the asset respects the platform's format constraints. An asset that violates
-character limits or ignores platform norms would feel off or unprofessional to a real user.
+Also consider:
+- Whether the asset speaks to your emotions and the outcome you care about, not just product features
+- Whether the headlines feel compelling and specific, or generic and forgettable
+- Whether the asset respects the platform's format constraints — a sloppy or truncated ad feels unprofessional
 
 Score 1-10:
 1-3: Would not act. Something actively puts me off or fails to address my needs.
@@ -219,10 +221,18 @@ ${assetText}
 
 Write a structured diagnostic report that:
 1. Flags any platform format violations (character limits exceeded, wrong field structure) — these are blockers
-2. Identifies the 3-5 most critical issues undermining conversion
-3. Identifies what IS working (don't break these things)
-4. Gives specific, actionable rewrite recommendations for each issue
-5. Prioritizes recommendations by potential impact
+2. Evaluates emotional resonance — does the asset lead with emotion or lead with features? Emotion drives purchase decisions. Flag any asset that is primarily rational/feature-led when it should be emotionally engaging.
+3. Evaluates headline quality using the 4 U's framework (applies to every headline present):
+   - Useful: does it promise a clear, tangible benefit?
+   - Urgent: does it give a reason to care NOW?
+   - Unique: does it offer a fresh angle, not generic?
+   - Ultra-specific: does it use concrete details, numbers, or a sharply defined promise?
+   Each headline should hit at least 3 of the 4 U's. Call out which U's are missing for each headline.
+4. Checks headline coherence — in multi-headline formats (e.g. Google Ads), ALL headlines must reinforce the same core theme and value proposition. Flag any headline that goes off-theme or dilutes the message.
+5. Identifies the 3-5 most critical issues undermining conversion
+6. Identifies what IS working (don't break these things)
+7. Gives specific, actionable rewrite recommendations for each issue
+8. Prioritizes recommendations by potential impact
 
 Be specific — reference actual phrases/elements in the asset. Be direct.`;
 };
@@ -277,6 +287,24 @@ Rewrite rules:
 - The rewrite must be meaningfully different from the current version, not just lightly edited
 - Specificity beats generality — concrete details outperform vague claims
 - Address the top objections head-on rather than ignoring them
+
+COPYWRITING STANDARDS — enforce these in every rewrite:
+
+EMOTION FIRST: Lead with the emotional outcome, not the feature. People buy feelings, not specs.
+  Bad: "Our app has a one-button recording feature"
+  Good: "Press once — your mom's voice is saved forever"
+
+HEADLINE 4 U'S: Every headline must score 3 of 4 U's:
+  - Useful: promises a clear, tangible benefit (not vague)
+  - Urgent: creates a reason to act now (not someday)
+  - Unique: fresh angle, not generic or industry-standard
+  - Ultra-specific: uses numbers, concrete details, a sharply defined promise
+  Weak: "Easy to Use" (0 U's) → Strong: "Save 3 Hours a Week — No Training Needed" (3 U's)
+
+HEADLINE COHERENCE: In multi-headline formats (Google Ads etc.), ALL headlines must pull in the same direction.
+  Every headline should reinforce the same core theme and value proposition.
+  Bad: [Headline 1: memories] [Headline 2: tech ease] [Headline 3: book creation] — scattered
+  Good: [Headline 1: preserve memories] [Headline 2: effortless memory capture] [Headline 3: memories become heirlooms] — unified
 
 Output ONLY the rewritten asset text. No explanation, no preamble, no commentary.`;
 };
