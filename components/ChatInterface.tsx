@@ -24,7 +24,7 @@ export default function ChatInterface({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const lastSpokenIndexRef = useRef(-1);
 
-  const { isSpeaking, isMuted, isSupported: ttsSupported, speak, toggleMute } = useTTS();
+  const { isSpeaking, isMuted, isSupported: ttsSupported, speak, stop: stopTTS, toggleMute } = useTTS();
   const { isListening, interimText, isSupported: sttSupported, startListening, stopListening } = useSTT();
 
   // Auto-scroll on new messages
@@ -51,11 +51,12 @@ export default function ChatInterface({
       e?.preventDefault();
       const text = input.trim();
       if (!text || isLoading || disabled) return;
+      stopTTS();
       onSend(text);
       setInput("");
       if (textareaRef.current) textareaRef.current.style.height = "auto";
     },
-    [input, isLoading, disabled, onSend]
+    [input, isLoading, disabled, onSend, stopTTS]
   );
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -72,6 +73,7 @@ export default function ChatInterface({
   };
 
   const handleMicClick = useCallback(() => {
+    stopTTS();
     if (isListening) {
       stopListening();
     } else {
@@ -89,7 +91,7 @@ export default function ChatInterface({
         });
       });
     }
-  }, [isListening, startListening, stopListening]);
+  }, [isListening, startListening, stopListening, stopTTS]);
 
   return (
     <div className="flex flex-col h-full">
