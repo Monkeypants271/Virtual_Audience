@@ -131,6 +131,59 @@ Output ONLY valid JSON — no markdown, no explanation:
   ]
 }`;
 
+// ─── Persona Batch Generator (10 at a time) ──────────────────────────────────
+
+export const getPersonaBatchPrompt = (
+  icp: ICP,
+  brief: CampaignBrief,
+  skepticismLevel: "low" | "medium" | "high",
+  idOffset: number
+) => `You are generating 10 distinct virtual audience members based on this Ideal Customer Profile.
+
+ICP:
+- Age Range: ${icp.ageRange}
+- Gender: ${icp.genderDescription}
+- Location: ${icp.location}
+- Professional Context: ${icp.professionalContext}
+- Problems/Frustrations: ${icp.problemsFrustrations}
+- Motivators: ${icp.motivators}
+- Objections: ${icp.objections}
+- Category Familiarity: ${icp.categoryFamiliarity}
+- Emotional State: ${icp.emotionalState}
+
+Campaign context: ${brief.product} — ${brief.assetType} targeting ${brief.objective}
+
+Generate exactly 10 personas. All must have skepticismLevel "${skepticismLevel}".
+IDs must start at p${idOffset + 1} through p${idOffset + 10}.
+
+Vary across the 10 personas:
+- motivationLevel: mix of low/medium/high (roughly 3-4 of each)
+- familiarityWithCategory: mix of low/medium/high
+- Age within the defined range
+- Occupation (realistic variety)
+- Emotional state (busy, open, distracted, curious, resistant, optimistic, etc.)
+- Primary motivation (different angles from the ICP motivators)
+- Primary objection (different objections from the ICP objections)
+
+Output ONLY valid JSON — no markdown, no explanation:
+{
+  "personas": [
+    {
+      "id": "p${idOffset + 1}",
+      "name": "...",
+      "age": 0,
+      "occupation": "...",
+      "motivationLevel": "low|medium|high",
+      "skepticismLevel": "${skepticismLevel}",
+      "familiarityWithCategory": "low|medium|high",
+      "primaryMotivation": "...",
+      "primaryObjection": "...",
+      "emotionalState": "...",
+      "briefDescription": "One sentence describing this person."
+    }
+  ]
+}`;
+
 // ─── Persona Scorer ───────────────────────────────────────────────────────────
 
 export const getPersonaScorerPrompt = (
