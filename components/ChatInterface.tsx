@@ -32,6 +32,18 @@ export default function ChatInterface({
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
+  // When unmuting, mark current messages as "already spoken" so we don't replay —
+  // only truly NEW messages after unmuting will be spoken
+  const wasMutedRef = useRef(isMuted);
+  useEffect(() => {
+    if (wasMutedRef.current && !isMuted) {
+      // Just unmuted — skip everything already on screen
+      const lastIndex = messages.length - 1;
+      if (lastIndex >= 0) lastSpokenIndexRef.current = lastIndex;
+    }
+    wasMutedRef.current = isMuted;
+  }, [isMuted, messages.length]);
+
   // Auto-speak new assistant messages
   useEffect(() => {
     if (!ttsSupported || isMuted) return;
