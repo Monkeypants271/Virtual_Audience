@@ -1,6 +1,10 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
+import {
+  listSavedBriefs, saveBrief, loadBrief,
+  listSavedAudiences, saveAudience, loadAudience,
+} from "@/lib/storage";
 import type {
   Phase,
   ChatMessage,
@@ -116,25 +120,15 @@ export default function Home() {
   const [iterations, setIterations] = useState<Iteration[]>([]);
   const [optimizationError, setOptimizationError] = useState<string | null>(null);
 
-  // ─── Load saved names on landing ────────────────────────────────────────────
+  // ─── Load saved names from localStorage ─────────────────────────────────────
 
   useEffect(() => {
-    fetch("/api/saved-briefs")
-      .then((r) => r.json())
-      .then((d) => setSavedBriefNames(d.names ?? []))
-      .catch(() => {});
-  }, []);
-
-  const loadSavedAudienceNames = useCallback(() => {
-    fetch("/api/saved-audiences")
-      .then((r) => r.json())
-      .then((d) => setSavedAudienceNames(d.names ?? []))
-      .catch(() => {});
+    setSavedBriefNames(listSavedBriefs());
   }, []);
 
   useEffect(() => {
-    if (phase === "audience") loadSavedAudienceNames();
-  }, [phase, loadSavedAudienceNames]);
+    if (phase === "audience") setSavedAudienceNames(listSavedAudiences());
+  }, [phase]);
 
   // ─── Brief Agent ─────────────────────────────────────────────────────────────
 
@@ -175,24 +169,19 @@ export default function Home() {
     [briefMessages]
   );
 
-  const loadSavedBrief = useCallback(async (name: string) => {
-    const res = await fetch(`/api/saved-briefs/${encodeURIComponent(name)}`);
-    const data = await res.json();
-    if (data.brief) {
-      setBrief(data.brief);
+  const loadSavedBrief = useCallback((name: string) => {
+    const brief = loadBrief(name);
+    if (brief) {
+      setBrief(brief);
       setBriefSaveName(name);
       setBriefSubPhase("review");
     }
   }, []);
 
-  const saveBrief = useCallback(async () => {
+  const handleSaveBrief = useCallback(() => {
     if (!brief || !briefSaveName.trim()) return;
     setBriefSaving(true);
-    await fetch("/api/saved-briefs", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: briefSaveName.trim(), brief }),
-    });
+    saveBrief(briefSaveName.trim(), brief);
     setBriefSaving(false);
     setBriefSaved(true);
     setSavedBriefNames((prev) =>
@@ -266,10 +255,9 @@ export default function Home() {
     setAudienceSubPhase("review");
   }, [brief]);
 
-  const loadSavedAudience = useCallback(async (name: string) => {
-    const res = await fetch(`/api/saved-audiences/${encodeURIComponent(name)}`);
-    const data = await res.json();
-    if (data.icp && data.personas) {
+  const loadSavedAudience = useCallback((name: string) => {
+    const data = loadAudience(name);
+    if (data) {
       setIcp(data.icp);
       setPersonas(data.personas);
       setAudienceSaveName(name);
@@ -277,14 +265,10 @@ export default function Home() {
     }
   }, []);
 
-  const saveAudience = useCallback(async () => {
+  const handleSaveAudience = useCallback(() => {
     if (!icp || personas.length === 0 || !audienceSaveName.trim()) return;
     setAudienceSaving(true);
-    await fetch("/api/saved-audiences", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: audienceSaveName.trim(), icp, personas }),
-    });
+    saveAudience(audienceSaveName.trim(), icp, personas);
     setAudienceSaving(false);
     setAudienceSaved(true);
     setSavedAudienceNames((prev) =>
@@ -565,7 +549,7 @@ export default function Home() {
                       className="flex-1 bg-neutral-900 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-neutral-200 placeholder-neutral-600 focus:outline-none focus:border-amber-500/50"
                     />
                     <button
-                      onClick={saveBrief}
+                      onClick={handleSaveBrief}
                       disabled={!briefSaveName.trim() || briefSaving}
                       className={`px-4 py-2 text-sm rounded-lg transition-colors whitespace-nowrap ${
                         briefSaved
@@ -786,7 +770,7 @@ export default function Home() {
                     className="flex-1 bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-neutral-200 placeholder-neutral-600 focus:outline-none focus:border-amber-500/50"
                   />
                   <button
-                    onClick={saveAudience}
+                    onClick={handleSaveAudience}
                     disabled={!audienceSaveName.trim() || audienceSaving}
                     className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 disabled:opacity-40 text-neutral-300 text-sm rounded-lg transition-colors whitespace-nowrap"
                   >
