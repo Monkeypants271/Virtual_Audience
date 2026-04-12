@@ -4,6 +4,8 @@ import anthropic, { MODEL } from "@/lib/anthropic";
 import { getPersonaScorerPrompt } from "@/lib/prompts";
 import type { ScorePersonaRequest, ScorePersonaResponse, AssetImage } from "@/lib/types";
 
+export const maxDuration = 60;
+
 function buildContent(
   promptText: string,
   images?: AssetImage[]

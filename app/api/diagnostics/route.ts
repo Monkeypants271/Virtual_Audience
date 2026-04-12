@@ -4,6 +4,8 @@ import anthropic, { MODEL } from "@/lib/anthropic";
 import { getDiagnosticsPrompt } from "@/lib/prompts";
 import type { DiagnosticsRequest, DiagnosticsResponse, AssetImage } from "@/lib/types";
 
+export const maxDuration = 60;
+
 function buildContent(
   promptText: string,
   images?: AssetImage[]

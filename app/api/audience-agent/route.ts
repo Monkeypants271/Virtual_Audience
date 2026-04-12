@@ -3,6 +3,8 @@ import anthropic, { MODEL } from "@/lib/anthropic";
 import { getAudienceAgentSystem } from "@/lib/prompts";
 import type { AudienceAgentRequest, AudienceAgentResponse, ICP } from "@/lib/types";
 
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
   const { messages, brief }: AudienceAgentRequest = await req.json();
 

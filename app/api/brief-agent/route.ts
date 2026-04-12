@@ -3,6 +3,8 @@ import anthropic, { MODEL } from "@/lib/anthropic";
 import { BRIEF_AGENT_SYSTEM } from "@/lib/prompts";
 import type { BriefAgentRequest, BriefAgentResponse, CampaignBrief } from "@/lib/types";
 
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
   const { messages }: BriefAgentRequest = await req.json();
 

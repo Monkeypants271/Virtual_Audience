@@ -3,6 +3,8 @@ import anthropic, { MODEL } from "@/lib/anthropic";
 import { getPersonaGeneratorPrompt } from "@/lib/prompts";
 import type { GeneratePersonasRequest, GeneratePersonasResponse } from "@/lib/types";
 
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
   const { icp, brief }: GeneratePersonasRequest = await req.json();
 

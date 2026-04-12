@@ -3,6 +3,8 @@ import anthropic, { MODEL } from "@/lib/anthropic";
 import { getRefinementPrompt } from "@/lib/prompts";
 import type { RefineRequest, RefineResponse } from "@/lib/types";
 
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
   const { assetText, brief, diagnosticReport, previousScore }: RefineRequest = await req.json();
 
