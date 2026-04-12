@@ -167,11 +167,16 @@ Also consider:
 - Whether the headlines feel compelling and specific, or generic and forgettable
 - Whether the asset respects the platform's format constraints — a sloppy or truncated ad feels unprofessional
 
-Score 1-10:
-1-3: Would not act. Something actively puts me off or fails to address my needs.
-4-6: Maybe. Something resonates but significant friction or objections remain.
-7-9: Likely to act. This speaks to me and addresses my concerns well.
-10: Would definitely act. This is exactly what I needed to see.
+Score 1-10 — use the FULL range, not just the middle:
+1–2: Actively negative. This feels spammy, irrelevant, or off-putting. I'd hide this ad.
+3–4: Weak. I notice it but feel nothing. Not relevant or not believable. Would scroll past.
+5: Neutral. Inoffensive but forgettable. Nothing hooks me. I ignore it.
+6: Mild interest. Something caught my eye but I have real doubts. Unlikely to act today.
+7: Genuine interest. This speaks to a real need or desire I have. I'd likely click to learn more.
+8: Strong pull. This addresses my concerns and makes me want to act. I'd click and probably convert.
+9–10: This is exactly what I needed to see at the right moment. Acting immediately.
+
+Calibration check: A mediocre ad with generic copy should score 3–5. A competent ad that addresses the persona's core need should score 6–7. An excellent ad that also overcomes objections and creates urgency should score 8–9. Do NOT cluster scores at 5–6 — spread them across the range based on how strongly this specific persona reacts.
 
 Output ONLY valid JSON:
 {"score": 0, "reason": "One sentence from this persona's point of view explaining the score."}`;
@@ -247,10 +252,12 @@ export const getRefinementPrompt = (
 ) => {
   const aggressiveness =
     previousScore < 5
-      ? "The score is very low. Tear this down and rebuild it from scratch. Only preserve factual claims."
-      : previousScore < 7
-      ? "The score is below target. Make bold, substantial changes — restructure, reframe, rewrite the headline and opening. Minor tweaks won't move the needle."
-      : "The score is getting closer. Make targeted improvements to the specific issues flagged below.";
+      ? "The score is very low (below 5). This version is not working. Tear it down and rebuild completely from scratch — different angle, different emotional hook, different structure. Only preserve factual claims."
+      : previousScore < 6.5
+      ? "The score is below 6.5 — this ad is not yet compelling. Make BOLD, DRAMATIC changes. Rewrite the headline from a completely different emotional angle. Restructure entirely. Minor tweaks will not move the score. Be creative and surprising."
+      : previousScore < 7.5
+      ? "The score is getting closer but still below target. Make substantial improvements — sharpen the emotional hook, add urgency, make the value more concrete. Don't just polish — change what isn't working."
+      : "The score is close to target. Make precise, targeted improvements to the specific issues flagged below. Keep what's working.";
 
   const spec = detectPlatformSpec(brief.assetType);
   const platformSection = spec

@@ -20,8 +20,8 @@ import AssetInput from "@/components/AssetInput";
 import OptimizationProgress from "@/components/OptimizationProgress";
 import ResultsDisplay from "@/components/ResultsDisplay";
 
-const MAX_ITERATIONS = 5;
-const TARGET_SCORE = 8.5;
+const MAX_ITERATIONS = 8;
+const TARGET_SCORE = 8.0;
 
 type BriefSubPhase = "landing" | "chat" | "review";
 type AudienceSubPhase = "choice" | "chat" | "generating" | "review" | "asset";
