@@ -232,6 +232,8 @@ CRITICAL CALIBRATION RULES — read these carefully:
 - LOW MOTIVATION means this topic is not top of mind for you — but if the ad creates urgency and relevance for you specifically, you can still score 7+
 - Reserve 5–6 only for ads that are partially relevant but missing something important
 - Do NOT default to 5 or 6 out of caution — commit to a score that reflects your genuine reaction
+- Salesy hype language ("amazing!", "revolutionary", "act now!", "limited time") should LOWER your score — real people distrust this and tune out
+- Walls of text with no structure or scannability make you feel overwhelmed — factor this into your score
 
 Output ONLY valid JSON:
 {"score": 0, "reason": "One sentence from this persona's point of view explaining the score."}`;
@@ -281,18 +283,20 @@ ${assetText}
 
 Write a structured diagnostic report that:
 1. Flags any platform format violations (character limits exceeded, wrong field structure) — these are blockers
-2. Evaluates emotional resonance — does the asset lead with emotion or lead with features? Emotion drives purchase decisions. Flag any asset that is primarily rational/feature-led when it should be emotionally engaging.
-3. Evaluates headline quality using the 4 U's framework (applies to every headline present):
+2. Checks for salesy language — flag any use of hype words (amazing, revolutionary, game-changing, act now, don't miss out, limited time, etc.), excessive exclamation marks, or unsubstantiated superlatives. Salesy copy triggers skepticism and reduces conversion.
+3. Checks scannability — is the copy easy to skim in 5 seconds? Flag walls of text, paragraphs longer than 3 sentences, buried headlines, or missing structure. Good copy has clear visual hierarchy and short digestible chunks.
+4. Evaluates emotional resonance — does the asset lead with emotion or lead with features? Emotion drives purchase decisions. Flag any asset that is primarily rational/feature-led when it should be emotionally engaging.
+6. Evaluates headline quality using the 4 U's framework (applies to every headline present):
    - Useful: does it promise a clear, tangible benefit?
    - Urgent: does it give a reason to care NOW?
    - Unique: does it offer a fresh angle, not generic?
    - Ultra-specific: does it use concrete details, numbers, or a sharply defined promise?
    Each headline should hit at least 3 of the 4 U's. Call out which U's are missing for each headline.
-4. Checks headline coherence — in multi-headline formats (e.g. Google Ads), ALL headlines must reinforce the same core theme and value proposition. Flag any headline that goes off-theme or dilutes the message.
-5. Identifies the 3-5 most critical issues undermining conversion
-6. Identifies what IS working (don't break these things)
-7. Gives specific, actionable rewrite recommendations for each issue
-8. Prioritizes recommendations by potential impact
+7. Checks headline coherence — in multi-headline formats (e.g. Google Ads), ALL headlines must reinforce the same core theme and value proposition. Flag any headline that goes off-theme or dilutes the message.
+8. Identifies the 3-5 most critical issues undermining conversion
+9. Identifies what IS working (don't break these things)
+10. Gives specific, actionable rewrite recommendations for each issue
+11. Prioritizes recommendations by potential impact
 
 Be specific — reference actual phrases/elements in the asset. Be direct.`;
 };
@@ -356,6 +360,25 @@ EMOTION FIRST: Lead with the emotional outcome, not the feature. People buy feel
   Bad: "Our app has a one-button recording feature"
   Good: "Press once — your mom's voice is saved forever"
 
+ANTI-SALESY: Write like a trusted friend, not a pitch deck. Readers tune out hype instantly.
+  - NEVER use: amazing, revolutionary, game-changing, incredible, powerful, seamless, unlock, leverage, cutting-edge, world-class, limited time, act now, don't miss out, exclusive offer
+  - NEVER use more than one exclamation mark in the entire asset
+  - NEVER make a claim you can't back up with a specific detail
+  - Replace superlatives with specifics: not "amazing results" → "3x more responses in the first week"
+  - The reader should feel understood, not sold to
+
+YOU-FOCUSED: Every sentence should be about what THEY get, not what you offer.
+  Bad: "We built a tool that helps families..."
+  Good: "Your family's stories, preserved forever — even if grandma has never touched a smartphone"
+
+SCANNABLE STRUCTURE: No walls of text. Every asset must be easy to skim in 5 seconds.
+  - No paragraph longer than 2-3 sentences
+  - Use line breaks between distinct ideas
+  - For emails: use a clear structure — Hook → Problem → Solution → Proof → CTA
+  - For longer copy: use short subheadings to guide the eye
+  - Lead with the most important thing — don't bury the headline value in paragraph 3
+  - Bullet points for any list of 3 or more items
+
 HEADLINE 4 U'S: Every headline must score 3 of 4 U's:
   - Useful: promises a clear, tangible benefit (not vague)
   - Urgent: creates a reason to act now (not someday)
@@ -369,7 +392,7 @@ HEADLINE COHERENCE: In multi-headline formats (Google Ads etc.), ALL headlines m
   Good: [Headline 1: preserve memories] [Headline 2: effortless memory capture] [Headline 3: memories become heirlooms] — unified
 
 Output ONLY the rewritten asset text. No explanation, no preamble, no commentary.
-No markdown formatting — no **bold**, no ## headers, no bullet points. Just the clean ad copy exactly as it would appear in the ad platform.`;
+No markdown formatting — no **bold**, no ## headers. Use plain line breaks and hyphens for structure. The output should look exactly as it would appear in the real ad or email.`;
 };
 
 // ─── Final Report ─────────────────────────────────────────────────────────────
