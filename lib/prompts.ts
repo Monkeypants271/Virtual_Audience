@@ -306,7 +306,8 @@ HEADLINE COHERENCE: In multi-headline formats (Google Ads etc.), ALL headlines m
   Bad: [Headline 1: memories] [Headline 2: tech ease] [Headline 3: book creation] — scattered
   Good: [Headline 1: preserve memories] [Headline 2: effortless memory capture] [Headline 3: memories become heirlooms] — unified
 
-Output ONLY the rewritten asset text. No explanation, no preamble, no commentary.`;
+Output ONLY the rewritten asset text. No explanation, no preamble, no commentary.
+No markdown formatting — no **bold**, no ## headers, no bullet points. Just the clean ad copy exactly as it would appear in the ad platform.`;
 };
 
 // ─── Final Report ─────────────────────────────────────────────────────────────

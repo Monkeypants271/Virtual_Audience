@@ -193,25 +193,6 @@ export default function AssetInput({ brief, onSubmit }: AssetInputProps) {
         {/* Submit row */}
         <div className="flex justify-between items-center pt-1">
           <div className="flex items-center gap-3">
-            {charLimit && charLimit.limit > 0 ? (
-              <span
-                className={`text-xs font-mono ${
-                  text.length > charLimit.limit
-                    ? "text-red-400"
-                    : charLimit.recommended && text.length > charLimit.recommended
-                    ? "text-amber-400"
-                    : "text-neutral-500"
-                }`}
-              >
-                {text.length} / {charLimit.limit}
-                {text.length > charLimit.limit && " — OVER LIMIT"}
-                {charLimit.recommended && text.length > charLimit.recommended && text.length <= charLimit.limit && " — over recommended"}
-              </span>
-            ) : (
-              <span className="text-xs text-neutral-500">
-                {text.length > 0 ? `${text.length} characters` : ""}
-              </span>
-            )}
             {images.length > 0 && (
               <span className="text-xs text-neutral-500">
                 {images.length} image{images.length !== 1 ? "s" : ""}

@@ -13,7 +13,10 @@ interface ResultsDisplayProps {
 export default function ResultsDisplay({ iterations, personas, brief }: ResultsDisplayProps) {
   if (iterations.length === 0) return null;
 
-  const finalIteration = iterations[iterations.length - 1];
+  const lastIteration = iterations[iterations.length - 1];
+  // Show the best-scoring iteration's asset, not necessarily the last one
+  const bestIteration = iterations.reduce((best, iter) =>
+    iter.averageScore > best.averageScore ? iter : best, iterations[0]);
   const scores = iterations.map((it) => it.averageScore);
 
   // Audience summary stats
@@ -24,21 +27,24 @@ export default function ResultsDisplay({ iterations, personas, brief }: ResultsD
     motivationCounts[p.motivationLevel]++;
   });
 
-  const scoreImprovement = finalIteration.averageScore - iterations[0].averageScore;
-  const targetReached = finalIteration.averageScore >= 8.5;
+  const scoreImprovement = bestIteration.averageScore - iterations[0].averageScore;
+  const targetReached = bestIteration.averageScore >= 8.5;
 
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Summary header */}
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-neutral-800 border border-neutral-700 rounded-xl p-4">
-          <p className="text-xs text-neutral-500 mb-1">Final Score</p>
+          <p className="text-xs text-neutral-500 mb-1">Best Score</p>
           <p className={`text-3xl font-bold font-mono ${targetReached ? "text-green-400" : "text-amber-400"}`}>
-            {finalIteration.averageScore.toFixed(1)}
+            {bestIteration.averageScore.toFixed(1)}
             <span className="text-neutral-600 text-lg font-normal">/10</span>
           </p>
           {targetReached && (
             <p className="text-xs text-green-400 mt-1">Target reached</p>
+          )}
+          {bestIteration.iterationNumber !== lastIteration.iterationNumber && (
+            <p className="text-xs text-neutral-500 mt-1">Iter {bestIteration.iterationNumber}</p>
           )}
         </div>
         <div className="bg-neutral-800 border border-neutral-700 rounded-xl p-4">
@@ -63,25 +69,32 @@ export default function ResultsDisplay({ iterations, personas, brief }: ResultsD
         <ScoreChart scores={scores} />
       </div>
 
-      {/* Final asset — prominent */}
+      {/* Best asset — prominent */}
       <div className="bg-neutral-800 border border-amber-500/30 rounded-xl p-5">
         <div className="flex items-center justify-between mb-4">
-          <p className="text-sm font-semibold text-amber-400 uppercase tracking-wider">Final Optimized Asset</p>
+          <div>
+            <p className="text-sm font-semibold text-amber-400 uppercase tracking-wider">Best Optimized Asset</p>
+            {bestIteration.iterationNumber !== lastIteration.iterationNumber && (
+              <p className="text-xs text-neutral-500 mt-0.5">
+                Iteration {bestIteration.iterationNumber} scored highest — used instead of the final version
+              </p>
+            )}
+          </div>
           <span className="px-2 py-1 bg-amber-500 text-neutral-900 text-xs font-bold rounded">
-            {finalIteration.averageScore.toFixed(1)} / 10
+            {bestIteration.averageScore.toFixed(1)} / 10
           </span>
         </div>
         <pre className="font-mono text-sm text-neutral-200 whitespace-pre-wrap leading-relaxed">
-          {finalIteration.assetText}
+          {bestIteration.assetText}
         </pre>
       </div>
 
-      {/* Final diagnostic */}
-      {finalIteration.diagnosticReport && (
+      {/* Diagnostic for best iteration */}
+      {bestIteration.diagnosticReport && (
         <div className="bg-neutral-800 border border-neutral-700 rounded-xl p-5">
-          <p className="text-sm font-medium text-neutral-300 mb-3">Final Diagnostic Report</p>
+          <p className="text-sm font-medium text-neutral-300 mb-3">Diagnostic Report</p>
           <div className="text-sm text-neutral-400 whitespace-pre-wrap leading-relaxed">
-            {finalIteration.diagnosticReport}
+            {bestIteration.diagnosticReport}
           </div>
         </div>
       )}

@@ -301,6 +301,8 @@ export default function Home() {
       setPhase("optimizing");
       setIterations([]);
       let currentAsset = initialAsset;
+      let bestAsset = initialAsset;
+      let bestScore = -Infinity;
       const allIterations: Iteration[] = [];
 
       // Shuffle personas to avoid systematic bias in running average
@@ -360,6 +362,12 @@ export default function Home() {
         // Update running score to actual final average
         setOptState((s) => ({ ...s, runningScore: avg }));
 
+        // Track the best-scoring version so we always refine from a strong base
+        if (avg > bestScore) {
+          bestScore = avg;
+          bestAsset = currentAsset;
+        }
+
         // ── Diagnostics ──
         setOptState((s) => ({ ...s, phase: "diagnosing" }));
         const diagRes = await fetch("/api/diagnostics", {
@@ -398,12 +406,12 @@ export default function Home() {
           return;
         }
 
-        // ── Refine ──
+        // ── Refine from best-scoring version (not necessarily the last one) ──
         setOptState((s) => ({ ...s, phase: "refining" }));
         const refineRes = await fetch("/api/refine", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ assetText: currentAsset, brief, diagnosticReport, previousScore: avg }),
+          body: JSON.stringify({ assetText: bestAsset, brief, diagnosticReport, previousScore: bestScore }),
         });
         const refineData = await refineRes.json();
         currentAsset = refineData.refinedAsset;
@@ -821,7 +829,7 @@ export default function Home() {
               <h2 className="text-xl font-semibold text-neutral-100 mb-1">Optimization Complete</h2>
               <p className="text-sm text-neutral-400">
                 {iterations.length} iteration{iterations.length !== 1 ? "s" : ""} completed ·{" "}
-                {iterations[iterations.length - 1]?.averageScore >= TARGET_SCORE
+                {Math.max(...iterations.map((it) => it.averageScore)) >= TARGET_SCORE
                   ? "Target score reached"
                   : "Maximum iterations reached"}
               </p>

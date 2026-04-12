@@ -13,6 +13,20 @@ export function useTTS() {
   // Always supported — uses our server-side API route
   const isSupported = true;
 
+  // Stop audio when the component using this hook unmounts (e.g. navigating away from chat)
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+        objectUrlRef.current = null;
+      }
+    };
+  }, []);
+
   const stop = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause();
