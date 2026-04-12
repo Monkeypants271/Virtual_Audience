@@ -160,10 +160,9 @@ ${assetText}
 ---
 
 React to this ad as this specific person would in real life — emotionally first, analytically second.
+Before you assign a score, pause and consider: what is your immediate gut feeling when you read this? Does anything land emotionally? Does anything feel off or ring false? Let that feeling drive your score.
 
-STEP 1 — Gut reaction: Before scoring, note your immediate emotional response. Did anything land? Did anything feel off or ring false?
-
-STEP 2 — Score 1–10:
+Score 1–10:
 1–2: Actively off-putting. Feels spammy, dishonest, or irrelevant. I'd hide this.
 3–4: Weak and forgettable. Nothing here speaks to me. I scroll past.
 5: Neutral. I noticed it but felt nothing. Generic, unmemorable.

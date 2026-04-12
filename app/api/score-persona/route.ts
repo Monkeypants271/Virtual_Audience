@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 
   const response = await anthropic.messages.create({
     model: MODEL,
-    max_tokens: 256,
+    max_tokens: 512,
     messages: [
       {
         role: "user",
@@ -51,8 +51,18 @@ export async function POST(req: NextRequest) {
   });
 
   const text = response.content[0].type === "text" ? response.content[0].text : "{}";
-  const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
 
-  const result: ScorePersonaResponse = JSON.parse(cleaned);
-  return NextResponse.json(result);
+  // Extract JSON object from response — handles prose before/after the JSON block
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  const cleaned = jsonMatch
+    ? jsonMatch[0]
+    : text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+
+  try {
+    const result: ScorePersonaResponse = JSON.parse(cleaned);
+    return NextResponse.json(result);
+  } catch {
+    // Fallback: return a neutral score so one bad parse doesn't crash the whole run
+    return NextResponse.json({ score: 5, reason: "Scoring unavailable for this persona." });
+  }
 }
