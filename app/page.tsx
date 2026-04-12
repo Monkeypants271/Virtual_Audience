@@ -813,7 +813,7 @@ export default function Home() {
         {/* ════════════════════════════════════════════════════ OPTIMIZING */}
         {phase === "optimizing" && (
           <div className="w-full max-w-xl mx-auto animate-fade-in">
-            <OptimizationProgress state={optState} completedIterations={iterations} />
+            <OptimizationProgress state={optState} completedIterations={iterations} maxIterations={MAX_ITERATIONS} targetScore={TARGET_SCORE} />
             {optimizationError && (
               <div className="mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
                 <p className="text-sm text-red-400">{optimizationError}</p>

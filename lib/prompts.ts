@@ -159,24 +159,27 @@ THE ASSET:
 ${assetText}
 ---
 
-From THIS persona's perspective — their skepticism, motivations, objections, and emotional state —
-score how likely you are to take the requested action after seeing this asset.
+React to this ad as this specific person would in real life — emotionally first, analytically second.
 
-Also consider:
-- Whether the asset speaks to your emotions and the outcome you care about, not just product features
-- Whether the headlines feel compelling and specific, or generic and forgettable
-- Whether the asset respects the platform's format constraints — a sloppy or truncated ad feels unprofessional
+STEP 1 — Gut reaction: Before scoring, note your immediate emotional response. Did anything land? Did anything feel off or ring false?
 
-Score 1-10 — use the FULL range, not just the middle:
-1–2: Actively negative. This feels spammy, irrelevant, or off-putting. I'd hide this ad.
-3–4: Weak. I notice it but feel nothing. Not relevant or not believable. Would scroll past.
-5: Neutral. Inoffensive but forgettable. Nothing hooks me. I ignore it.
-6: Mild interest. Something caught my eye but I have real doubts. Unlikely to act today.
-7: Genuine interest. This speaks to a real need or desire I have. I'd likely click to learn more.
-8: Strong pull. This addresses my concerns and makes me want to act. I'd click and probably convert.
-9–10: This is exactly what I needed to see at the right moment. Acting immediately.
+STEP 2 — Score 1–10:
+1–2: Actively off-putting. Feels spammy, dishonest, or irrelevant. I'd hide this.
+3–4: Weak and forgettable. Nothing here speaks to me. I scroll past.
+5: Neutral. I noticed it but felt nothing. Generic, unmemorable.
+6: Mild interest. Something caught my eye but I have unresolved doubts.
+7: Real interest. This speaks to something I genuinely care about. I'd click to learn more.
+8: Strong pull. This hits my core motivation and makes me want to act soon.
+9–10: This is exactly what I needed. I'm acting now.
 
-Calibration check: A mediocre ad with generic copy should score 3–5. A competent ad that addresses the persona's core need should score 6–7. An excellent ad that also overcomes objections and creates urgency should score 8–9. Do NOT cluster scores at 5–6 — spread them across the range based on how strongly this specific persona reacts.
+CRITICAL CALIBRATION RULES — read these carefully:
+- If the ad directly addresses your primaryMotivation (listed in your persona above), it earns at least a 7
+- If it also credibly overcomes your primaryObjection (listed in your persona above), it earns at least an 8
+- If the headline creates genuine emotional resonance with your specific situation, it earns at least a 7
+- HIGH SKEPTICISM means you need stronger proof before believing — it does NOT cap your score. A skeptical person who IS convinced scores 8 or 9, not 5.
+- LOW MOTIVATION means this topic is not top of mind for you — but if the ad creates urgency and relevance for you specifically, you can still score 7+
+- Reserve 5–6 only for ads that are partially relevant but missing something important
+- Do NOT default to 5 or 6 out of caution — commit to a score that reflects your genuine reaction
 
 Output ONLY valid JSON:
 {"score": 0, "reason": "One sentence from this persona's point of view explaining the score."}`;
@@ -253,11 +256,11 @@ export const getRefinementPrompt = (
   const aggressiveness =
     previousScore < 5
       ? "The score is very low (below 5). This version is not working. Tear it down and rebuild completely from scratch — different angle, different emotional hook, different structure. Only preserve factual claims."
-      : previousScore < 6.5
-      ? "The score is below 6.5 — this ad is not yet compelling. Make BOLD, DRAMATIC changes. Rewrite the headline from a completely different emotional angle. Restructure entirely. Minor tweaks will not move the score. Be creative and surprising."
-      : previousScore < 7.5
-      ? "The score is getting closer but still below target. Make substantial improvements — sharpen the emotional hook, add urgency, make the value more concrete. Don't just polish — change what isn't working."
-      : "The score is close to target. Make precise, targeted improvements to the specific issues flagged below. Keep what's working.";
+      : previousScore < 6.0
+      ? "The score is below 6.0 — this ad is not yet compelling. Make BOLD, DRAMATIC changes. Rewrite the headline from a completely different emotional angle. Restructure entirely. Minor tweaks will not move the score. Be creative and surprising."
+      : previousScore < 7.0
+      ? "The score is above 6 but still below target. Make targeted, surgical improvements — fix the specific issues flagged below without dismantling what is already working. Sharpen one or two weak elements rather than rebuilding."
+      : "The score is strong. Make only precise, minimal improvements to the specific issues flagged below. Preserve everything that is working.";
 
   const spec = detectPlatformSpec(brief.assetType);
   const platformSection = spec

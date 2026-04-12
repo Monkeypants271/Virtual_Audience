@@ -2,12 +2,11 @@
 
 import type { OptimizationState, Iteration } from "@/lib/types";
 
-const MAX_ITERATIONS = 5;
-const TARGET_SCORE = 8.5;
-
 interface OptimizationProgressProps {
   state: OptimizationState;
   completedIterations: Iteration[];
+  maxIterations: number;
+  targetScore: number;
 }
 
 const PHASE_LABELS: Record<OptimizationState["phase"], string> = {
@@ -18,7 +17,9 @@ const PHASE_LABELS: Record<OptimizationState["phase"], string> = {
   done: "Complete",
 };
 
-export default function OptimizationProgress({ state, completedIterations }: OptimizationProgressProps) {
+export default function OptimizationProgress({ state, completedIterations, maxIterations, targetScore }: OptimizationProgressProps) {
+  const MAX_ITERATIONS = maxIterations;
+  const TARGET_SCORE = targetScore;
   const personaPercent =
     state.phase === "scoring"
       ? Math.round((state.completedPersonas / state.totalPersonas) * 100)
