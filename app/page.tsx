@@ -772,7 +772,11 @@ export default function Home() {
                   <button
                     onClick={handleSaveAudience}
                     disabled={!audienceSaveName.trim() || audienceSaving}
-                    className="px-4 py-2 bg-neutral-700 hover:bg-neutral-600 disabled:opacity-40 text-neutral-300 text-sm rounded-lg transition-colors whitespace-nowrap"
+                    className={`px-4 py-2 text-sm rounded-lg transition-colors whitespace-nowrap ${
+                      audienceSaved
+                        ? "bg-green-500/20 border border-green-500/30 text-green-400"
+                        : "bg-amber-500/20 border border-amber-500/30 hover:bg-amber-500/30 text-amber-400 disabled:opacity-40"
+                    }`}
                   >
                     {audienceSaving ? "Saving..." : audienceSaved ? "Saved ✓" : "Save Audience"}
                   </button>
