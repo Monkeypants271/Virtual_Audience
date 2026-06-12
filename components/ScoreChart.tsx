@@ -62,7 +62,7 @@ export default function ScoreChart({ scores }: ScoreChartProps) {
             y1={padding.top + ((max - TARGET) / max) * chartHeight}
             x2={400 - padding.right}
             y2={padding.top + ((max - TARGET) / max) * chartHeight}
-            stroke="#f59e0b"
+            stroke="#7aa483"
             strokeWidth={1}
             strokeDasharray="4 4"
             opacity={0.5}
@@ -73,7 +73,7 @@ export default function ScoreChart({ scores }: ScoreChartProps) {
             x={400 - padding.right + 4}
             y={padding.top + ((max - TARGET) / max) * chartHeight + 4}
             fontSize={9}
-            fill="#f59e0b"
+            fill="#7aa483"
             opacity={0.7}
           >
             {TARGET}
@@ -96,7 +96,7 @@ export default function ScoreChart({ scores }: ScoreChartProps) {
                   width={30}
                   height={barH}
                   rx={3}
-                  fill={isFinal ? "#f59e0b" : "#d97706"}
+                  fill={isFinal ? "#7aa483" : "#5e8568"}
                   opacity={isFinal ? 1 : 0.5 + (i / scores.length) * 0.5}
                 />
                 {/* Score label above bar */}
@@ -105,7 +105,7 @@ export default function ScoreChart({ scores }: ScoreChartProps) {
                   y={y - 5}
                   textAnchor="middle"
                   fontSize={10}
-                  fill={isFinal ? "#fbbf24" : "#a3a3a3"}
+                  fill={isFinal ? "#93c0a0" : "#a3a3a3"}
                   fontWeight={isFinal ? "bold" : "normal"}
                 >
                   {score.toFixed(1)}

@@ -9,10 +9,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Brand accent — sage green, anchored on StoryGecko's VirtualAudience
+        // card color (#7aa483 == amber-500). Kept under the `amber-*` class
+        // names the app already uses so the whole UI recolors from one place;
+        // despite the name, these are greens.
         amber: {
-          400: "#fbbf24",
-          500: "#f59e0b",
-          600: "#d97706",
+          100: "#e3efe6",
+          200: "#c7dfcd",
+          300: "#aacfb4",
+          400: "#93c0a0",
+          500: "#7aa483",
+          600: "#5e8568",
+          700: "#4e6f56",
+          800: "#3a5341",
+          900: "#2a3d30",
         },
         neutral: {
           900: "#0a0a0a",
