@@ -23,6 +23,7 @@ import ChatInterface from "@/components/ChatInterface";
 import AssetInput from "@/components/AssetInput";
 import OptimizationProgress from "@/components/OptimizationProgress";
 import ResultsDisplay from "@/components/ResultsDisplay";
+import ModelBadge from "@/components/ModelBadge";
 
 const MAX_ITERATIONS = 8;
 const TARGET_SCORE = 8.0;
@@ -484,10 +485,14 @@ export default function Home() {
                   </svg>
                 </div>
                 <h1 className="text-2xl font-bold text-neutral-100 mb-3">Optimize any marketing asset</h1>
-                <p className="text-neutral-400 text-sm max-w-md mx-auto mb-10 leading-relaxed">
+                <p className="text-neutral-400 text-sm max-w-md mx-auto mb-6 leading-relaxed">
                   A virtual audience of 30 personas will score your asset, identify what&apos;s working
                   and what isn&apos;t, then iteratively refine it — before you spend a dollar on real ads.
                 </p>
+
+                <div className="flex justify-center mb-10">
+                  <ModelBadge />
+                </div>
 
                 <div className="flex flex-col items-center gap-6 w-full max-w-sm">
                   <button
