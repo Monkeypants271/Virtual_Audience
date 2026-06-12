@@ -12,7 +12,7 @@ issues, refines the asset, and iterates until a target score is reached.
 
 ## Tech
 - Next.js 14 App Router, TypeScript, Tailwind CSS
-- Anthropic API: claude-sonnet-4-20250514
+- Anthropic API: claude-sonnet-4-6
 - All AI calls go through /app/api/ route handlers
 
 ## Rules

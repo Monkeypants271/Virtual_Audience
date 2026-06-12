@@ -51,6 +51,11 @@ export default function IterationCard({ iteration, isFirst, isFinal }: Iteration
                   FINAL
                 </span>
               )}
+              {iteration.variantWon === "Challenger" && (
+                <span className="px-1.5 py-0.5 bg-sky-500/20 text-sky-300 border border-sky-500/30 text-xs font-semibold rounded">
+                  CHALLENGER WON
+                </span>
+              )}
             </div>
             <div className="flex gap-3 mt-1">
               <span className="text-xs text-neutral-500">

@@ -307,10 +307,13 @@ export const getRefinementPrompt = (
   assetText: string,
   brief: CampaignBrief,
   diagnosticReport: string,
-  previousScore: number
+  previousScore: number,
+  mode: "refine" | "challenger" = "refine"
 ) => {
   const aggressiveness =
-    previousScore < 5
+    mode === "challenger"
+      ? "This is a CHALLENGER version, written to compete head-to-head against a safer edit of the same asset. Do NOT protect the current version — no matter how high its score, your job is to find a dramatically better angle. Throw out the current headline and lead concept and rebuild from a completely different emotional hook, a different way into the reader's problem, or a different framing of the core promise. It should feel genuinely surprising next to the original. Preserve only the factual claims and the underlying offer — everything else is open. Play to win, not safe."
+      : previousScore < 5
       ? "The score is very low (below 5). This version is not working. Tear it down and rebuild completely from scratch — different angle, different emotional hook, different structure. Only preserve factual claims."
       : previousScore < 6.0
       ? "The score is below 6.0 — this ad is not yet compelling. Make BOLD, DRAMATIC changes. Rewrite the headline from a completely different emotional angle. Restructure entirely. Minor tweaks will not move the score. Be creative and surprising."

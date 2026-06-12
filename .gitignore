@@ -25,3 +25,7 @@ npm-debug.log*
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+.vercel
+
+# Local scratch (dev-server logs, etc.)
+.tmp/

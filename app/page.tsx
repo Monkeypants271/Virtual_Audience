@@ -284,7 +284,6 @@ export default function Home() {
 
       setPhase("optimizing");
       setIterations([]);
-      let currentAsset = initialAsset;
       let bestAsset = initialAsset;
       let bestScore = -Infinity;
       const allIterations: Iteration[] = [];
@@ -292,24 +291,22 @@ export default function Home() {
       // Shuffle personas to avoid systematic bias in running average
       const shuffledPersonas = shuffle(personas);
 
-      for (let iterNum = 1; iterNum <= MAX_ITERATIONS; iterNum++) {
+      // Score one asset across all personas in parallel; updates live progress.
+      const scoreAsset = async (assetToScore: string, variantLabel?: string) => {
+        let completedCount = 0;
+        let runningTotal = 0;
         setOptState((s) => ({
           ...s,
-          currentIteration: iterNum,
           phase: "scoring",
           completedPersonas: 0,
           runningScore: 0,
+          variantLabel,
         }));
-
-        // ── Score all personas in parallel ──
-        let completedCount = 0;
-        let runningTotal = 0;
-
         const scorePromises = shuffledPersonas.map(async (persona) => {
           const res = await fetch("/api/score-persona", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ persona, brief, assetText: currentAsset, images }),
+            body: JSON.stringify({ persona, brief, assetText: assetToScore, images }),
           });
           const data = await res.json();
           completedCount++;
@@ -321,13 +318,49 @@ export default function Home() {
           }));
           return { personaId: persona.id, score: data.score, reason: data.reason } as PersonaScore;
         });
+        return Promise.all(scorePromises);
+      };
 
-        const personaScores = await Promise.all(scorePromises);
+      // Candidates evaluated at the start of each iteration. Iteration 1 holds just
+      // the original; later iterations pit a surgical Refined version against a bold
+      // Challenger and keep whichever the audience scores higher.
+      let candidates: { asset: string; label: string }[] = [
+        { asset: initialAsset, label: "Original" },
+      ];
 
-        // ── Aggregate ──
-        setOptState((s) => ({ ...s, phase: "aggregating" }));
-        const total = personaScores.reduce((sum, ps) => sum + ps.score, 0);
-        const avg = total / personaScores.length;
+      for (let iterNum = 1; iterNum <= MAX_ITERATIONS; iterNum++) {
+        setOptState((s) => ({
+          ...s,
+          currentIteration: iterNum,
+          phase: "scoring",
+          completedPersonas: 0,
+          runningScore: 0,
+          variantLabel: undefined,
+        }));
+
+        // ── Score every candidate; keep the highest-scoring one ──
+        const evaluated: {
+          asset: string;
+          label: string;
+          personaScores: PersonaScore[];
+          avg: number;
+        }[] = [];
+        for (const cand of candidates) {
+          const showLabel = candidates.length > 1 ? cand.label : undefined;
+          const personaScores = await scoreAsset(cand.asset, showLabel);
+          const avg =
+            personaScores.reduce((sum, ps) => sum + ps.score, 0) / personaScores.length;
+          evaluated.push({ asset: cand.asset, label: cand.label, personaScores, avg });
+        }
+
+        const winner = evaluated.reduce((best, c) => (c.avg > best.avg ? c : best));
+        const currentAsset = winner.asset;
+        const personaScores = winner.personaScores;
+        const avg = winner.avg;
+        const variantWon = candidates.length > 1 ? winner.label : undefined;
+
+        // ── Aggregate winner ──
+        setOptState((s) => ({ ...s, phase: "aggregating", runningScore: avg, variantLabel: undefined }));
 
         const lowReasons = personaScores.filter((ps) => ps.score <= 3).map((ps) => ps.reason);
         const highReasons = personaScores.filter((ps) => ps.score >= 7).map((ps) => ps.reason);
@@ -342,9 +375,6 @@ export default function Home() {
           topObjections: extractTopItems(lowReasons),
           topPositives: extractTopItems(highReasons),
         };
-
-        // Update running score to actual final average
-        setOptState((s) => ({ ...s, runningScore: avg }));
 
         // Track the best-scoring version so we always refine from a strong base
         if (avg > bestScore) {
@@ -379,6 +409,7 @@ export default function Home() {
           topPositives: aggregation.topPositives,
           diagnosticReport,
           personaScores,
+          variantWon,
         };
         allIterations.push(iteration);
         setIterations([...allIterations]);
@@ -390,15 +421,25 @@ export default function Home() {
           return;
         }
 
-        // ── Refine from best-scoring version (not necessarily the last one) ──
-        setOptState((s) => ({ ...s, phase: "refining" }));
-        const refineRes = await fetch("/api/refine", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ assetText: bestAsset, brief, diagnosticReport, previousScore: bestScore }),
-        });
-        const refineData = await refineRes.json();
-        currentAsset = refineData.refinedAsset;
+        // ── Produce next candidates: a surgical Refined version and a bold Challenger,
+        //    both rewritten from the best-scoring version so far. ──
+        setOptState((s) => ({ ...s, phase: "refining", variantLabel: undefined }));
+        const [refined, challenger] = await Promise.all([
+          fetch("/api/refine", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ assetText: bestAsset, brief, diagnosticReport, previousScore: bestScore, mode: "refine" }),
+          }).then((r) => r.json()),
+          fetch("/api/refine", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ assetText: bestAsset, brief, diagnosticReport, previousScore: bestScore, mode: "challenger" }),
+          }).then((r) => r.json()),
+        ]);
+        candidates = [
+          { asset: refined.refinedAsset, label: "Refined" },
+          { asset: challenger.refinedAsset, label: "Challenger" },
+        ];
       }
     },
     [brief, personas]
