@@ -6,7 +6,7 @@ import type { RefineRequest, RefineResponse } from "@/lib/types";
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
-  const { assetText, brief, diagnosticReport, previousScore }: RefineRequest = await req.json();
+  const { assetText, brief, diagnosticReport, previousScore, mode }: RefineRequest = await req.json();
 
   const response = await anthropic.messages.create({
     model: MODEL,
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     messages: [
       {
         role: "user",
-        content: getRefinementPrompt(assetText, brief, diagnosticReport, previousScore),
+        content: getRefinementPrompt(assetText, brief, diagnosticReport, previousScore, mode),
       },
     ],
   });

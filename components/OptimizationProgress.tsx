@@ -104,6 +104,9 @@ export default function OptimizationProgress({ state, completedIterations, maxIt
           <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse-slow" />
           <span className="text-sm font-medium text-neutral-200">
             {PHASE_LABELS[state.phase]}
+            {state.phase === "scoring" && state.variantLabel && (
+              <span className="text-neutral-400 font-normal"> · {state.variantLabel} variant</span>
+            )}
           </span>
         </div>
 

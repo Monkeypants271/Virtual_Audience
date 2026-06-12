@@ -74,6 +74,7 @@ export interface Iteration {
   topPositives: string[];
   diagnosticReport: string;
   personaScores: PersonaScore[];
+  variantWon?: string;  // which candidate won this iteration (e.g. "Challenger"), if a playoff was run
 }
 
 // ─── Chat ─────────────────────────────────────────────────────────────────────
@@ -96,6 +97,7 @@ export interface OptimizationState {
   phase: 'scoring' | 'aggregating' | 'diagnosing' | 'refining' | 'done';
   runningScore: number;
   completedPersonas: number;
+  variantLabel?: string;  // when scoring a specific candidate in a playoff, e.g. "Refined" | "Challenger"
 }
 
 // ─── API Request/Response shapes ──────────────────────────────────────────────
@@ -170,6 +172,7 @@ export interface RefineRequest {
   brief: CampaignBrief;
   diagnosticReport: string;
   previousScore: number;
+  mode?: 'refine' | 'challenger';  // 'refine' = score-scaled surgical edit; 'challenger' = bold re-angle
 }
 
 export interface RefineResponse {
